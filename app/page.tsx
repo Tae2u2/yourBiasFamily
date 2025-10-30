@@ -67,6 +67,8 @@ export default function ChoaeJokboV2() {
       setBiases([...biases, newBias]);
       setCurrentBias({ name: "", startDate: "", endDate: "", reason: "" });
       setPreviewPhoto("");
+    } else {
+      alert(ALERTS.formIncomplete);
     }
   };
 

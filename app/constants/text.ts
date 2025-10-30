@@ -28,7 +28,7 @@ export const LABELS = {
   uploadPhoto: "사진 업로드",
   photoPreviewHover: "호버하면 빈티지 미리보기",
   autoVintage: "자동으로 빈티지 필터 적용됨",
-  name: "이름/별명",
+  name: "이름",
   namePlaceholder: "예: 김민지",
   startDate: "입덕일",
   endDate: "탈덕일 (선택)",
@@ -49,4 +49,5 @@ export const LABELS = {
 
 export const ALERTS = {
   minBiasRequired: "최애를 2명 이상 추가해주세요!",
+  formIncomplete: "모든 필수 항목을 입력해주세요!\n(사진, 이름, 입덕일, 입덕 계기)",
 } as const;
