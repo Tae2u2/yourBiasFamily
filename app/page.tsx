@@ -49,12 +49,7 @@ export default function ChoaeJokboV2() {
   };
 
   const addBias = async () => {
-    if (
-      currentBias.name &&
-      currentBias.vintagePhoto &&
-      currentBias.startDate &&
-      currentBias.reason
-    ) {
+    if (currentBias.name && currentBias.vintagePhoto && currentBias.startDate) {
       const newBias: Bias = {
         id: Date.now().toString(),
         name: currentBias.name,
@@ -62,7 +57,7 @@ export default function ChoaeJokboV2() {
         vintagePhoto: currentBias.vintagePhoto!,
         startDate: currentBias.startDate,
         endDate: currentBias.endDate || "현재",
-        reason: currentBias.reason,
+        reason: currentBias.reason || "사랑해",
       };
       setBiases([...biases, newBias]);
       setCurrentBias({ name: "", startDate: "", endDate: "", reason: "" });
@@ -128,8 +123,11 @@ export default function ChoaeJokboV2() {
   const downloadJokbo = async () => {
     if (jokboRef.current) {
       const canvas = await html2canvas(jokboRef.current, {
-        backgroundColor: "#f8f4e8",
+        backgroundColor: "#eff6ff",
         scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
       });
       const link = document.createElement("a");
       link.download = "최애족보.png";

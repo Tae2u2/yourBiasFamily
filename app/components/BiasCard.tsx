@@ -1,8 +1,8 @@
-import { Trash2, Calendar } from 'lucide-react';
-import { Bias } from '../types';
-import { calculatePeriod, formatDate } from '../utils/dateUtils';
-import { LABELS } from '../constants/text';
-import { FONTS } from '../constants/styles';
+import { Trash2, Calendar } from "lucide-react";
+import { Bias } from "../types";
+import { calculatePeriod, formatDate } from "../utils/dateUtils";
+import { LABELS } from "../constants/text";
+import { FONTS } from "../constants/styles";
 
 interface BiasCardProps {
   bias: Bias;
@@ -46,25 +46,20 @@ export default function BiasCard({ bias, index, onRemove }: BiasCardProps) {
             className="text-2xl font-bold text-amber-900 border-b-2 border-amber-600 pb-2"
             style={FONTS.serif}
           >
-            {bias.name} {index === 0 && '👑'}
+            {bias.name} {index === 0 && "👑"}
           </h3>
 
           <div className="space-y-2 text-sm text-amber-800">
-            <div className="flex items-center justify-center gap-2">
-              <Calendar size={16} />
-              <span className="font-semibold">{LABELS.period}</span>
-            </div>
-            <p className="italic">
-              {formatDate(bias.startDate)} ~ {formatDate(bias.endDate)}
-            </p>
-            <p className="text-amber-600 font-semibold">
-              ({calculatePeriod(bias.startDate, bias.endDate)})
+            <p>
+              {formatDate(bias.startDate)} ~ {formatDate(bias.endDate)}(
+              {calculatePeriod(bias.startDate, bias.endDate)})
             </p>
           </div>
 
           <div className="pt-3 border-t-2 border-amber-400">
-            <p className="font-semibold text-amber-900 mb-1">{LABELS.story}</p>
-            <p className="text-sm text-amber-800 italic leading-relaxed">{bias.reason}</p>
+            <p className="text-sm text-amber-800 italic leading-relaxed">
+              {bias.reason}
+            </p>
           </div>
         </div>
       </div>
