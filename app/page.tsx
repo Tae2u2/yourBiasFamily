@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import html2canvas from "html2canvas";
 import { Bias, AIAnalysis, BiasFormData } from "./types";
 import { applyVintageFilter } from "./utils/imageFilters";
+import { generateJokboHTML } from "./utils/generateJokboHTML";
+import { captureAndDownloadHTML } from "./utils/captureHTML";
 import { ALERTS } from "./constants/text";
 import { LAYOUT } from "./constants/styles";
 import Header from "./components/Header";
@@ -121,18 +122,15 @@ export default function ChoaeJokboV2() {
   };
 
   const downloadJokbo = async () => {
-    if (jokboRef.current) {
-      const canvas = await html2canvas(jokboRef.current, {
-        backgroundColor: "#eff6ff",
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        logging: false,
-      });
-      const link = document.createElement("a");
-      link.download = "최애족보.png";
-      link.href = canvas.toDataURL();
-      link.click();
+    try {
+      // 순수 HTML 생성
+      const htmlContent = generateJokboHTML(biases, aiAnalysis);
+
+      // HTML을 렌더링하고 캡처하여 다운로드
+      await captureAndDownloadHTML(htmlContent, '최애족보.png');
+    } catch (error) {
+      console.error('족보 다운로드 실패:', error);
+      alert('족보 다운로드에 실패했습니다. 다시 시도해주세요.');
     }
   };
 
