@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Download } from "lucide-react";
 import { Bias, AIAnalysis } from "../types";
 import BiasCard from "./BiasCard";
 import AIAnalysisSection from "./AIAnalysisSection";
 import { APP_INFO, LABELS } from "../constants/text";
 import { COMMON_CLASSES, FONTS, LAYOUT } from "../constants/styles";
+import { sortByDate } from "../utils/dateUtils";
 
 interface JokboProps {
   biases: Bias[];
@@ -21,6 +22,11 @@ export default function Jokbo({
   onRemoveBias,
   onDownload,
 }: JokboProps) {
+  const sorted = useMemo(
+    () => sortByDate(biases, "startDate", "asc"),
+    [biases]
+  );
+
   if (biases.length === 0) {
     return (
       <div className="text-center py-12 text-amber-700">
@@ -56,18 +62,15 @@ export default function Jokbo({
               className="text-4xl font-bold text-amber-900 mb-2"
               style={FONTS.serif}
             >
-              {aiAnalysis.familyCrest || "⚜ 최애족보 가계도 ⚜"}
+              {aiAnalysis.familyCrest || "⚜ 최애족보 ⚜"}
             </h2>
-            <p className="text-amber-700 italic">
-              {APP_INFO.currentYear} {APP_INFO.year()}
-            </p>
           </div>
 
           {/* AI Analysis Section */}
           <AIAnalysisSection analysis={aiAnalysis} />
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {biases.map((bias, index) => (
+            {sorted.map((bias, index) => (
               <BiasCard
                 key={bias.id}
                 bias={bias}

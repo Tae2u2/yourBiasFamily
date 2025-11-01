@@ -7,7 +7,6 @@ export const APP_INFO = {
   description: "당신의 소나무 취향을 자랑하세요.",
   domain: "bias-jokbo.com",
   year: () => new Date().getFullYear(),
-  currentYear: "Anno Domini",
 } as const;
 
 export const COST_INFO = {
@@ -25,7 +24,7 @@ export const LABELS = {
   namePlaceholder: "예: 김민지",
   startDate: "입덕일",
   endDate: "탈덕일 (선택)",
-  reason: "입덕 계기",
+  reason: "입덕 계기 (선택)",
   reasonPlaceholder: "빠순이는 원래 순간을 위해 영원을 버텨...",
   customReasonPlaceholder: "직접 입력해주세요...",
   emptyState: "아직 등록된 최애가 없습니다.",
@@ -36,7 +35,7 @@ export const LABELS = {
   narrative: "족보 해설:",
   createdDate: (date: string) => `이 족보는 ${date} 에 작성되었습니다`,
   adPlaceholder: "📢 광고 영역 (Google AdSense)",
-  adDescription: "월 10,000명 = 광고 수익 10-15만원 예상",
+  adDescription: "",
 } as const;
 
 export const REASON_OPTIONS = [
