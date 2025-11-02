@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Bias, AIAnalysis, BiasFormData } from "./types";
+import { Bias, BiasFormData, AnalyzeIdolsResponse } from "./types";
 import { applyVintageFilter } from "./utils/imageFilters";
 import { generateJokboHTML } from "./utils/generateJokboHTML";
 import { captureAndDownloadHTML } from "./utils/captureHTML";
@@ -16,17 +16,15 @@ export default function ChoaeJokboV2() {
   const [biases, setBiases] = useState<Bias[]>([]);
   const [currentBias, setCurrentBias] = useState<Partial<BiasFormData>>({
     name: "",
+    group: "",
     startDate: "",
-    endDate: "",
-    reason: "",
   });
   const [previewPhoto, setPreviewPhoto] = useState<string>("");
-  const [aiAnalysis, setAiAnalysis] = useState<AIAnalysis>({
-    commonalities: [],
-    familyCrest: "",
-    narrative: "",
-    loading: false,
-  });
+  const [aiAnalysis, setAiAnalysis] = useState<AnalyzeIdolsResponse | null>(
+    null
+  );
+  const [loading, setLoading] = useState<boolean>(false);
+
   const jokboRef = useRef<HTMLDivElement>(null);
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,9 +35,8 @@ export default function ChoaeJokboV2() {
         const originalPhoto = reader.result as string;
         setPreviewPhoto(originalPhoto);
 
-        // 빈티지 필터 적용 (무료!)
-        const vintagePhoto = await applyVintageFilter(originalPhoto);
-        setCurrentBias({ ...currentBias, photo: originalPhoto, vintagePhoto });
+        const photo = await applyVintageFilter(originalPhoto);
+        setCurrentBias({ ...currentBias, photo });
       };
       reader.readAsDataURL(file);
     }
@@ -50,18 +47,21 @@ export default function ChoaeJokboV2() {
   };
 
   const addBias = async () => {
-    if (currentBias.name && currentBias.vintagePhoto && currentBias.startDate) {
+    if (
+      currentBias.name &&
+      currentBias.group &&
+      currentBias.photo &&
+      currentBias.startDate
+    ) {
       const newBias: Bias = {
         id: Date.now().toString(),
         name: currentBias.name,
+        group: currentBias.group,
         photo: currentBias.photo!,
-        vintagePhoto: currentBias.vintagePhoto!,
         startDate: currentBias.startDate,
-        endDate: currentBias.endDate || "현재",
-        reason: currentBias.reason || "사랑해",
       };
       setBiases([...biases, newBias]);
-      setCurrentBias({ name: "", startDate: "", endDate: "", reason: "" });
+      setCurrentBias({ name: "", group: "", startDate: "" });
       setPreviewPhoto("");
     } else {
       alert(ALERTS.formIncomplete);
@@ -72,52 +72,32 @@ export default function ChoaeJokboV2() {
     setBiases(biases.filter((b) => b.id !== id));
   };
 
-  // AI 공통점 분석 (초저비용: ~$0.001/건)
   const analyzeWithAI = async () => {
     if (biases.length < 2) {
       alert(ALERTS.minBiasRequired);
       return;
     }
 
-    setAiAnalysis({ ...aiAnalysis, loading: true });
-
     try {
       const response = await fetch("/api/analyze-biases", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          biases: biases.map((b) => ({
-            name: b.name,
-            reason: b.reason,
-            startDate: b.startDate,
-            endDate: b.endDate,
+          idols: biases.map((bias) => ({
+            name: bias.name,
+            group: bias.group,
+            startDate: bias.startDate,
           })),
         }),
       });
 
-      const data = await response.json();
+      const data: AnalyzeIdolsResponse = await response.json();
+      console.log(data.analysis);
 
-      setAiAnalysis({
-        commonalities: data.commonalities,
-        familyCrest: data.familyCrest,
-        narrative: data.narrative,
-        loading: false,
-      });
+      setAiAnalysis(data);
     } catch (error) {
-      // 데모용 더미 데이터
-      setTimeout(() => {
-        setAiAnalysis({
-          commonalities: [
-            "청순하고 밝은 이미지의 소유자들",
-            "뛰어난 춤 실력과 무대 장악력",
-            "귀여운 외모와 반전 매력의 조화",
-          ],
-          familyCrest: "⚜️ 淸純魅力家門 ⚜️",
-          narrative:
-            "그대의 취향은 맑은 샘물처럼 청아하되, 무대 위에선 불꽃처럼 타오르는 이들을 향하도다. 이들은 겉으로는 천사의 미소를 지녔으나, 그 안에 호랑이의 기개를 품은 자들이니...",
-          loading: false,
-        });
-      }, 2000);
+      console.error("AI 분석 실패:", error);
+      alert("AI 분석에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -127,10 +107,10 @@ export default function ChoaeJokboV2() {
       const htmlContent = generateJokboHTML(biases, aiAnalysis);
 
       // HTML을 렌더링하고 캡처하여 다운로드
-      await captureAndDownloadHTML(htmlContent, '최애족보.png');
+      await captureAndDownloadHTML(htmlContent, "최애족보.png");
     } catch (error) {
-      console.error('족보 다운로드 실패:', error);
-      alert('족보 다운로드에 실패했습니다. 다시 시도해주세요.');
+      console.error("족보 다운로드 실패:", error);
+      alert("족보 다운로드에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -147,11 +127,8 @@ export default function ChoaeJokboV2() {
           onSubmit={addBias}
         />
 
-        {biases.length >= 2 && !aiAnalysis.narrative && (
-          <AIAnalysisButton
-            loading={aiAnalysis.loading}
-            onClick={analyzeWithAI}
-          />
+        {biases.length >= 2 && !aiAnalysis && (
+          <AIAnalysisButton loading={loading} onClick={analyzeWithAI} />
         )}
 
         <Jokbo

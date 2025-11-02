@@ -21,12 +21,11 @@ export const LABELS = {
   photoPreviewHover: "호버하면 빈티지 미리보기",
   autoVintage: "자동으로 빈티지 필터 적용됨",
   name: "이름",
-  namePlaceholder: "예: 김민지",
+  namePlaceholder: "활동명으로 입력해주세요. 예) 정국(O) / 전정국(X)",
+  group: "소속 그룹",
+  groupPlaceholder:
+    "공식 그룹명을 입력해주세요. 예) 스트레이키즈(O) / 스키즈(X)",
   startDate: "입덕일",
-  endDate: "탈덕일 (선택)",
-  reason: "입덕 계기 (선택)",
-  reasonPlaceholder: "빠순이는 원래 순간을 위해 영원을 버텨...",
-  customReasonPlaceholder: "직접 입력해주세요...",
   emptyState: "아직 등록된 최애가 없습니다.",
   emptyStateAction: "위에서 첫 번째 최애를 등록해보세요! 👑",
   newBiasTitle: "새로운 최애 등록",
@@ -38,19 +37,8 @@ export const LABELS = {
   adDescription: "",
 } as const;
 
-export const REASON_OPTIONS = [
-  { value: "비주얼/외모가 너무 좋아서", label: "👀 비주얼/외모" },
-  { value: "춤/퍼포먼스가 멋있어서", label: "💃 춤/퍼포먼스" },
-  { value: "노래/보컬이 매력적이어서", label: "🎤 노래/보컬" },
-  { value: "예능감/성격이 좋아서", label: "😄 예능감/성격" },
-  { value: "무대 장악력이 뛰어나서", label: "⭐ 무대 장악력" },
-  { value: "특유의 매력/분위기 때문에", label: "✨ 매력/분위기" },
-  { value: "랩/작사작곡 능력 때문에", label: "🎵 랩/작사작곡" },
-  { value: "custom", label: "📝 직접 입력" },
-] as const;
-
 export const ALERTS = {
   minBiasRequired: "최애를 2명 이상 추가해주세요!",
   formIncomplete:
-    "모든 필수 항목을 입력해주세요!\n(사진, 이름, 입덕일, 입덕 계기)",
+    "모든 필수 항목을 입력해주세요!\n(사진, 이름, 소속 그룹, 입덕일)",
 } as const;

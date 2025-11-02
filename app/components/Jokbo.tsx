@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { Download } from "lucide-react";
-import { Bias, AIAnalysis } from "../types";
+import { Bias, AIAnalysis, AnalyzeIdolsResponse } from "../types";
 import BiasCard from "./BiasCard";
 import AIAnalysisSection from "./AIAnalysisSection";
 import { APP_INFO, LABELS } from "../constants/text";
@@ -9,7 +9,7 @@ import { sortByDate } from "../utils/dateUtils";
 
 interface JokboProps {
   biases: Bias[];
-  aiAnalysis: AIAnalysis;
+  aiAnalysis: AnalyzeIdolsResponse | null;
   jokboRef: React.RefObject<HTMLDivElement>;
   onRemoveBias: (id: string) => void;
   onDownload: () => void;
@@ -62,7 +62,7 @@ export default function Jokbo({
               className="text-4xl font-bold text-amber-900 mb-2"
               style={FONTS.serif}
             >
-              {aiAnalysis.familyCrest || "⚜ 최애족보 ⚜"}
+              ⚜ 최애족보 ⚜
             </h2>
           </div>
 

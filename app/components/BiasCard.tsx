@@ -1,7 +1,6 @@
-import { Trash2, Calendar, Minus } from "lucide-react";
+import { Minus } from "lucide-react";
 import { Bias } from "../types";
-import { calculatePeriod, formatDate } from "../utils/dateUtils";
-import { LABELS } from "../constants/text";
+import { formatDate } from "../utils/dateUtils";
 import { FONTS } from "../constants/styles";
 
 interface BiasCardProps {
@@ -33,7 +32,7 @@ export default function BiasCard({ bias, index, onRemove }: BiasCardProps) {
           <div className="inline-block p-2 bg-gradient-to-br from-amber-600 to-amber-800 rounded-lg shadow-xl">
             <div className="border-4 border-amber-100 rounded-lg overflow-hidden">
               <img
-                src={bias.vintagePhoto}
+                src={bias.photo}
                 alt={bias.name}
                 className="w-48 h-48 object-cover"
               />
@@ -46,17 +45,11 @@ export default function BiasCard({ bias, index, onRemove }: BiasCardProps) {
           style={FONTS.serif}
         >
           {bias.name}
-          <p className="text-sm pb-1">
-            ( {formatDate(bias.startDate)} ~ {formatDate(bias.endDate)} , +
-            {calculatePeriod(bias.startDate, bias.endDate)} )
+          <p className="text-sm pb-1 text-amber-700">{bias.group}</p>
+          <p className="text-xs text-amber-600">
+            입덕일: {formatDate(bias.startDate)}
           </p>
         </h3>
-
-        <div className="pt-3 border-t-2 border-amber-400">
-          <p className="text-sm text-amber-800 italic leading-relaxed">
-            {bias.reason}
-          </p>
-        </div>
       </div>
     </div>
   );

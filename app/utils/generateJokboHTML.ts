@@ -1,21 +1,16 @@
-import { Bias, AIAnalysis } from "../types";
-import { calculatePeriod, formatDate } from "./dateUtils";
+import { Bias, AnalyzeIdolsResponse } from "../types";
+import { formatDate } from "./dateUtils";
 
-/**
- * 족보를 순수 HTML로 생성합니다 (Next.js 환경에서도 안전하게 작동)
- */
 export const generateJokboHTML = (
   biases: Bias[],
-  aiAnalysis: AIAnalysis
+  aiAnalysis: AnalyzeIdolsResponse | null
 ): string => {
   const currentDate = new Date().toLocaleDateString("ko-KR");
 
-  // BiasCard HTML 생성
   const biasCardsHTML = biases
     .map(
       (bias) => `
     <div class="bias-card">
-      <!-- 중세 프레임 장식 -->
       <div class="frame-decoration">
         <div class="corner top-left"></div>
         <div class="corner top-right"></div>
@@ -27,55 +22,39 @@ export const generateJokboHTML = (
         <div class="photo-container">
           <div class="photo-frame">
             <div class="photo-border">
-              <img src="${bias.vintagePhoto}" alt="${bias.name}" />
+              <img src="${bias.photo}" alt="${bias.name}" />
             </div>
           </div>
         </div>
 
         <h3 class="bias-name">
           ${bias.name}
-          <p class="bias-period">
-            ( ${formatDate(bias.startDate)} ~ ${formatDate(
-        bias.endDate
-      )} , +${calculatePeriod(bias.startDate, bias.endDate)} )
+          <p class="bias-group">
+            ${bias.group}
+          </p>
+          <p class="bias-start-date">
+            입덕일: ${formatDate(bias.startDate)}
           </p>
         </h3>
-
-        <div class="bias-reason">
-          <p>${bias.reason}</p>
-        </div>
       </div>
     </div>
   `
     )
     .join("");
 
-  // AI Analysis Section HTML 생성
-  const aiAnalysisHTML = aiAnalysis.narrative
+  const aiAnalysisHTML = aiAnalysis?.analysis
     ? `
     <div class="ai-analysis">
       <h3 class="ai-title">
         ✨ AI가 분석한 그대의 취향
       </h3>
       <div class="ai-content">
-        <div class="commonalities-section">
-          <h4>공통점:</h4>
-          <ul>
-            ${aiAnalysis.commonalities
-              .map((item) => `<li>${item}</li>`)
-              .join("")}
-          </ul>
-        </div>
-        <div class="narrative-section">
-          <h4>족보 해설:</h4>
-          <p>${aiAnalysis.narrative}</p>
-        </div>
+        <p>${aiAnalysis.analysis}</p>
       </div>
     </div>
   `
     : "";
 
-  // 전체 HTML 템플릿
   return `
 <!DOCTYPE html>
 <html lang="ko">
@@ -132,7 +111,6 @@ export const generateJokboHTML = (
       font-style: italic;
     }
 
-    /* AI Analysis Styles */
     .ai-analysis {
       margin-bottom: 60px;
       background: linear-gradient(to bottom right, #f3e8ff, #fce7f3);
@@ -152,36 +130,12 @@ export const generateJokboHTML = (
       gap: 12px;
     }
 
-    .ai-content {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .commonalities-section h4,
-    .narrative-section h4 {
-      font-weight: bold;
-      color: #6b21a8;
-      margin-bottom: 12px;
-    }
-
-    .commonalities-section ul {
-      list-style: disc;
-      padding-left: 24px;
-    }
-
-    .commonalities-section li {
+    .ai-content p {
       color: #7e22ce;
-      margin-bottom: 6px;
-    }
-
-    .narrative-section p {
-      color: #7e22ce;
-      font-style: italic;
       line-height: 1.75;
+      white-space: pre-line;
     }
 
-    /* Bias Cards Grid */
     .bias-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -274,23 +228,17 @@ export const generateJokboHTML = (
       font-family: serif;
     }
 
-    .bias-period {
+    .bias-group {
       font-size: 14px;
       padding-bottom: 6px;
       font-weight: normal;
-    }
-
-    .bias-reason {
-      padding-top: 16px;
-      border-top: 2px solid #fbbf24;
-      margin-top: 16px;
-    }
-
-    .bias-reason p {
-      font-size: 14px;
       color: #92400e;
-      font-style: italic;
-      line-height: 1.6;
+    }
+
+    .bias-start-date {
+      font-size: 12px;
+      font-weight: normal;
+      color: #a16207;
     }
 
     .jokbo-footer {
@@ -345,7 +293,7 @@ export const generateJokboHTML = (
     <div class="jokbo-inner">
       <div class="jokbo-header">
         <h2 class="jokbo-title">
-          ${aiAnalysis.familyCrest || "⚜ 최애족보 ⚜"}
+          ⚜ 최애족보 ⚜
         </h2>
       </div>
 
@@ -363,7 +311,6 @@ export const generateJokboHTML = (
   </div>
 
   <script>
-    // 페이지 로드 후 자동으로 인쇄 대화상자 열기
     window.onload = function() {
       setTimeout(function() {
         window.print();
