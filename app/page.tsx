@@ -77,6 +77,7 @@ export default function ChoaeJokboV2() {
       alert(ALERTS.minBiasRequired);
       return;
     }
+    setLoading(true);
 
     try {
       const response = await fetch("/api/analyze-biases", {
@@ -92,10 +93,11 @@ export default function ChoaeJokboV2() {
       });
 
       const data: AnalyzeIdolsResponse = await response.json();
-      console.log(data.analysis);
 
       setAiAnalysis(data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error("AI 분석 실패:", error);
       alert("AI 분석에 실패했습니다. 다시 시도해주세요.");
     }

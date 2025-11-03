@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
 
     // Claude API 호출
     const message = await anthropic.messages.create({
-      model: "claude-haiku-3-20240307",
+      model: "claude-3-5-haiku-20241022",
       max_tokens: 500, // 4-5줄이면 충분
       messages: [
         {
