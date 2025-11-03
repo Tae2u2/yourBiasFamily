@@ -3,8 +3,6 @@
 import React, { useState, useRef } from "react";
 import { Bias, BiasFormData, AnalyzeIdolsResponse } from "./types";
 import { applyVintageFilter } from "./utils/imageFilters";
-import { generateJokboHTML } from "./utils/generateJokboHTML";
-import { captureAndDownloadHTML } from "./utils/captureHTML";
 import { ALERTS } from "./constants/text";
 import { LAYOUT } from "./constants/styles";
 import Header from "./components/Header";
@@ -104,12 +102,26 @@ export default function ChoaeJokboV2() {
   };
 
   const downloadJokbo = async () => {
-    try {
-      // 순수 HTML 생성
-      const htmlContent = generateJokboHTML(biases, aiAnalysis);
+    if (!jokboRef.current) {
+      alert("족보를 찾을 수 없습니다.");
+      return;
+    }
 
-      // HTML을 렌더링하고 캡처하여 다운로드
-      await captureAndDownloadHTML(htmlContent, "최애족보.png");
+    try {
+      // modern-screenshot으로 렌더링된 컴포넌트를 직접 캡처
+      const { domToPng } = await import("modern-screenshot");
+
+      const dataUrl = await domToPng(jokboRef.current, {
+        quality: 1.0, // 최고 품질
+        scale: 2, // 고해상도 (Retina)
+        backgroundColor: "#fffbeb",
+      });
+
+      // 다운로드
+      const link = document.createElement("a");
+      link.download = "최애족보.png";
+      link.href = dataUrl;
+      link.click();
     } catch (error) {
       console.error("족보 다운로드 실패:", error);
       alert("족보 다운로드에 실패했습니다. 다시 시도해주세요.");
